@@ -1,0 +1,9 @@
+services:
+  - type: worker
+    name: clawbot
+    runtime: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m src.db.seed && python -m src
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.0"

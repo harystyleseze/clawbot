@@ -1,0 +1,27 @@
+services:
+  bot:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - bot_data:/app/data
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Optional: Ollama for free local AI fallback (uncomment if needed)
+  # ollama:
+  #   image: ollama/ollama:latest
+  #   ports:
+  #     - "11434:11434"
+  #   volumes:
+  #     - ollama_data:/root/.ollama
+  #   restart: unless-stopped
+  #   # After starting: docker exec <container> ollama pull qwen2.5:1.5b
+
+volumes:
+  bot_data:
+  # ollama_data:

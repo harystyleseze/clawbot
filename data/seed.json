@@ -1,0 +1,41 @@
+{
+  "restaurant": {
+    "name": "Lobster Cave",
+    "telegram_handle": "@LobsterCaveBot",
+    "ton_wallet_address": "UQDsNMLvifvl6Q3vzqGXhc-ClELQ-hBfAHqEiqF7yI9HYqQ9",
+    "timezone": "Europe/Paris",
+    "opening_time": "12:00",
+    "closing_time": "23:00",
+    "deposit_amount_ton": 2.0
+  },
+  "tables": [
+    {"name": "Table 1", "capacity": 2, "location": "indoor"},
+    {"name": "Table 2", "capacity": 2, "location": "indoor"},
+    {"name": "Table 3", "capacity": 4, "location": "indoor"},
+    {"name": "Table 4", "capacity": 4, "location": "indoor"},
+    {"name": "Table 5", "capacity": 4, "location": "terrace"},
+    {"name": "Table 6", "capacity": 6, "location": "terrace"},
+    {"name": "Table 7", "capacity": 6, "location": "terrace"},
+    {"name": "Table 8", "capacity": 8, "location": "indoor"},
+    {"name": "Table 9", "capacity": 8, "location": "private"},
+    {"name": "Table 10", "capacity": 10, "location": "private"}
+  ],
+  "time_slots": [
+    {"slot_start": "12:00", "slot_end": "14:00"},
+    {"slot_start": "14:00", "slot_end": "16:00"},
+    {"slot_start": "18:00", "slot_end": "20:00"},
+    {"slot_start": "20:00", "slot_end": "22:00"},
+    {"slot_start": "21:00", "slot_end": "23:00"},
+    {"slot_start": "22:00", "slot_end": "00:00"}
+  ],
+  "faq_responses": [
+    {"question_pattern": "hours|open|when|time|horaire", "answer": "We're open daily from 12:00 to 23:00."},
+    {"question_pattern": "location|where|address|adresse|ou", "answer": "Lobster Cave, Cannes, French Riviera. Right on La Croisette!"},
+    {"question_pattern": "menu|food|eat|lobster|cuisine|plat", "answer": "We specialize in fresh seafood, with signature lobster dishes. Ask us for today's specials!"},
+    {"question_pattern": "parking|park|car|voiture", "answer": "Street parking nearby. We recommend the Palais des Festivals underground parking."},
+    {"question_pattern": "dress|code|wear|tenue", "answer": "Smart casual. No beachwear please."},
+    {"question_pattern": "price|cost|expensive|cher|prix|tarif", "answer": "Average spend is 65-95 EUR per person. Set menus start at 45 EUR."},
+    {"question_pattern": "deposit|acompte|payment|paiement|ton", "answer": "We accept a 2 TON deposit to secure your table (applied to your bill). You can also skip the deposit."},
+    {"question_pattern": "cancel|annul", "answer": "Cancel anytime by messaging me. Deposits are refundable if cancelled 24h+ before your booking."}
+  ]
+}

@@ -1,0 +1,13 @@
+aiogram~=3.20
+sqlalchemy[asyncio]~=2.0
+aiosqlite~=0.20
+alembic~=1.14
+httpx~=0.28
+pydantic~=2.10
+pydantic-settings~=2.7
+apscheduler~=3.11
+python-dotenv~=1.0
+loguru~=0.7
+pytest~=8.0
+pytest-asyncio~=0.24
+redis~=5.0
