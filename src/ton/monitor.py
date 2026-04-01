@@ -91,16 +91,27 @@ class DepositMonitor:
 
             in_msg = tx.get("in_msg", {})
             value = int(in_msg.get("value", 0))
-            comment = in_msg.get("message", "")
+            comment = in_msg.get("message", "").strip()
 
-            if value > 0 and comment.startswith("booking-"):
-                try:
-                    booking_id = int(comment.split("-", 1)[1])
-                    amount_ton = value / 1_000_000_000
-                    tx_hash = tx.get("transaction_id", {}).get("hash", "")
-                    await self._confirm_deposit(booking_id, tx_hash, amount_ton)
-                except (ValueError, IndexError) as e:
-                    logger.warning(f"Could not parse booking from comment '{comment}': {e}")
+            if value > 0:
+                amount_ton = value / 1_000_000_000
+                tx_hash = tx.get("transaction_id", {}).get("hash", "")
+                logger.info(
+                    f"New incoming tx: {amount_ton:.2f} TON, "
+                    f"comment='{comment}', hash={tx_hash[:16]}..."
+                )
+
+                if comment.startswith("booking-"):
+                    # Exact match: comment contains booking ID
+                    try:
+                        booking_id = int(comment.split("-", 1)[1])
+                        await self._confirm_deposit(booking_id, tx_hash, amount_ton)
+                    except (ValueError, IndexError) as e:
+                        logger.warning(f"Could not parse booking ID from '{comment}': {e}")
+                else:
+                    # No booking comment — try to match by amount to a pending booking
+                    # This handles wallets that don't pass the comment through
+                    await self._try_match_pending_deposit(tx_hash, amount_ton, comment)
 
             if tx_lt > new_lt:
                 new_lt = tx_lt
@@ -108,6 +119,31 @@ class DepositMonitor:
         if new_lt > self._last_lt:
             self._last_lt = new_lt
             self._save_last_lt(new_lt)
+
+    async def _try_match_pending_deposit(
+        self, tx_hash: str, amount_ton: float, comment: str
+    ) -> None:
+        """Try to match a deposit without a booking comment to the most recent pending booking."""
+        async with self.session_factory() as session:
+            # Find the most recent booking awaiting deposit
+            from sqlalchemy import select
+            from src.db.models import Booking
+
+            result = await session.execute(
+                select(Booking)
+                .where(Booking.status == "confirmed")
+                .order_by(Booking.created_at.desc())
+                .limit(1)
+            )
+            booking = result.scalar_one_or_none()
+            if booking:
+                logger.info(
+                    f"Matched untagged deposit ({amount_ton:.2f} TON) "
+                    f"to most recent pending booking #{booking.id}"
+                )
+                await self._confirm_deposit(booking.id, tx_hash, amount_ton)
+            else:
+                logger.info(f"Unmatched deposit: {amount_ton:.2f} TON, comment='{comment}'")
 
     async def _confirm_deposit(
         self, booking_id: int, tx_hash: str, amount_ton: float
@@ -125,9 +161,8 @@ class DepositMonitor:
             await dao.mark_deposit_paid(session, booking_id, tx_hash, amount_ton)
             await session.commit()
 
-            logger.info(f"Deposit confirmed for booking #{booking_id}: {amount_ton} TON")
+            logger.info(f"Deposit CONFIRMED for booking #{booking_id}: {amount_ton} TON")
 
-            # Notify customer
             slot_label = booking.time_slot.label if booking.time_slot else "?"
             try:
                 await self.bot.send_message(
@@ -142,6 +177,7 @@ class DepositMonitor:
                         f"See you at Lobster Cave!"
                     ),
                 )
+                logger.info(f"Customer notified for booking #{booking_id}")
             except Exception as e:
                 logger.error(f"Failed to notify guest: {e}")
 

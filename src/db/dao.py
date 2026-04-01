@@ -205,7 +205,10 @@ async def get_pending_reminders(
     pending = []
     for b in bookings:
         slot_dt = datetime.combine(b.date, b.time_slot.slot_start)
-        if now <= slot_dt <= reminder_window:
+        # Make both naive for comparison (SQLite stores naive datetimes)
+        now_naive = now.replace(tzinfo=None) if now.tzinfo else now
+        window_naive = reminder_window.replace(tzinfo=None) if reminder_window.tzinfo else reminder_window
+        if now_naive <= slot_dt <= window_naive:
             pending.append(b)
     return pending
 
