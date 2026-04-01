@@ -70,9 +70,6 @@ python scripts/test_health.py       # Integration health check
 ```bash
 ./scripts/deploy.sh                 # Docker deploy (one command)
 ```
-
-See [docs/DEPLOY-ALEPH.md](docs/DEPLOY-ALEPH.md) for Aleph Cloud deployment.
-
 ## Tech Stack
 
 | Layer | Technology |

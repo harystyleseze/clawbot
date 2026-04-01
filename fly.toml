@@ -1,0 +1,12 @@
+app = 'clawbot-green-pond-68'
+primary_region = 'jnb'
+
+[build]
+
+[processes]
+  app = "sh -c 'python -m src.db.seed && python -m src'"
+
+[[vm]]
+  memory = '1gb'
+  cpu_kind = 'shared'
+  cpus = 1

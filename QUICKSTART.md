@@ -98,9 +98,6 @@ Bot starting polling...
 ./scripts/deploy.sh
 ```
 
-### Aleph Cloud (free hackathon credits)
-See [docs/DEPLOY-ALEPH.md](docs/DEPLOY-ALEPH.md)
-
 ### Production Settings
 ```bash
 # In .env:
